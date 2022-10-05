@@ -74,13 +74,18 @@ individual<genome_size> population<genome_size, method>::sample( Rng& rand_sourc
     else if( method == Probabilistic )
     {
         auto rand = rnd_double( rand_source );
+        auto interval = {0, candidates.size()};
 
-        for ( int i = 0; i < candidates.size(); ++i ) {
-            if( cumulative_probability[i] >= rand || i == candidates.size() - 1 )
+        while ( interval[0] != interval[1] ) {
+            auto mid = ( interval[0] + interval[1] ) / 2;
+            if( cumulative_probability[mid] >= rand )
             {
-                return candidates[i];
+                interval[1] = mid;
+                continue;
             }
+            interval[0] = mid;
         }
+        return candidates[ interval[1] ];
     }
 }
 
