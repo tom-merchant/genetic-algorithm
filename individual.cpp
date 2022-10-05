@@ -4,6 +4,7 @@
 
 #pragma once
 
+
 template<size_t genome_size>
 individual<genome_size>::individual( Rng& rand_source ) {
     for ( int i = 0; i < chromosomes; ++i ) {
@@ -35,4 +36,19 @@ void individual<genome_size>::mutate( double probability, Rng& rand_source ) {
     }
 
     genes[ chromosomes - 1 ] &= final_chromosome_mask;
+}
+
+template < size_t genome_size >
+void individual<genome_size>::set_chromosome ( size_t n, uint64_t chromosome ){
+    genes[ n ] = chromosome;
+
+    if( n == chromosomes - 1 )
+    {
+        genes[ n ] &= final_chromosome_mask;
+    }
+}
+
+
+template < size_t genome_size >
+individual<genome_size>::individual ( ){
 }

@@ -21,12 +21,16 @@ class CountOnesEval : public evaluator<genome_size> {
 };
 
 int main() {
-    population<1024, Probabilistic> environment( std::make_unique<CountOnesEval<1024>>() );
+    population<1024, Tournament, 2> environment(
+            std::make_shared<CountOnesEval<1024>>(),
+            std::make_shared<OnePointCrossover<1024>>() );
+
     DefaultRand rng;
 
-    environment.spawn( 512, rng );
+    environment.spawn( 500, rng );
 
-    std::cout << environment.pop_mean_fitness() << std::endl;
-
-    return 0;
+    for ( int i = 0 ; i < 250 ; ++i ){
+        std::cout << "epoch " << i << ". mean fitness " << environment.pop_mean_fitness() << std::endl;
+        environment = environment.breed ( 500, 0.001, rng );
+    }
 }

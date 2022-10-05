@@ -3,8 +3,8 @@ project(week1cpp)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(week1cpp main.cpp individual.h population.h rng.h rng.cpp evaluator.h)
-add_executable(count_ones tests/count_ones.cpp individual.h population.h rng.h rng.cpp evaluator.h)
+add_executable(week1cpp main.cpp individual.h population.h rng.h rng.cpp evaluator.h combinator.h)
+add_executable(count_ones tests/count_ones.cpp individual.h population.h rng.h rng.cpp evaluator.h combinator.h)
 
 Include(FetchContent)
 
@@ -21,7 +21,7 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)
 include(Catch)
 
-add_executable(test_rng tests/test_rng.cpp individual.h population.h rng.h rng.cpp evaluator.h)
+add_executable(test_rng tests/test_rng.cpp rng.h rng.cpp )
 target_link_libraries(test_rng PRIVATE Catch2::Catch2WithMain)
 
 catch_discover_tests(test_rng)
