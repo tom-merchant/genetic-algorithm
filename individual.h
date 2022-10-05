@@ -24,7 +24,7 @@ public:
     size_t chromosome_count() { return chromosomes; }
 
 private:
-    static constexpr size_t chromosomes = 1 + genome_size/64;
+    static constexpr size_t chromosomes = (genome_size + 63)/64;
     static constexpr uint64_t final_chromosome_mask = genome_size % 64 == 0 ? ~0 : ~0 << 64 - ( genome_size % 64 );
 
     std::array<uint64_t, chromosomes> genes;
