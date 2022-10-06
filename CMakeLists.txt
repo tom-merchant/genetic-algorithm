@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 23)
 add_executable(week1cpp main.cpp individual.h population.h rng.h rng.cpp evaluator.h combinator.h)
 add_executable(count_ones tests/count_ones.cpp individual.h population.h rng.h rng.cpp evaluator.h combinator.h)
 
+target_compile_options(count_ones PRIVATE -march=native -O3 )
+
 Include(FetchContent)
 
 FetchContent_Declare(

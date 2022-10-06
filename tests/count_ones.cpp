@@ -30,7 +30,11 @@ int main() {
     environment.spawn( 500, rng );
 
     for ( int i = 0 ; i < 250 ; ++i ){
-        std::cout << "epoch " << i << ". mean fitness " << environment.pop_mean_fitness() << std::endl;
+        std::cout
+            << "epoch " << i
+            << ". mean fitness " << environment.pop_mean_fitness()
+            << ". total fitness " << environment.pop_fitness()
+            << ". best fitness " << environment.best_candidate().fitness << std::endl;
         environment = environment.breed ( 500, 0.001, rng );
     }
 }
