@@ -3,6 +3,11 @@ project(week1cpp)
 
 set(CMAKE_CXX_STANDARD 23)
 
+add_library(nanovg nanovg/src/nanovg.h nanovg/src/nanovg.c nanovg/src/nanovg.h nanovg/src/stb_image.h nanovg/src/stb_truetype.h)
+include_directories(nanovg/src)
+
+add_compile_definitions( NANOVG_GL3_IMPLEMENTATION )
+
 add_executable(week1cpp main.cpp individual.h population.h rng.h rng.cpp evaluator.h combinator.h)
 
 Include(FetchContent)
@@ -16,7 +21,15 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(SDL2)
 
-set(SDL_LIBRARIES ${SDL_LIBRARIES} mingw32 SDL2main SDL2-static)
+FetchContent_Declare(
+        glew
+        GIT_REPOSITORY https://github.com/Perlmint/glew-cmake
+        GIT_TAG glew-cmake-2.2.0
+)
+
+FetchContent_MakeAvailable(glew)
+
+set(SDL_LIBRARIES ${SDL_LIBRARIES} mingw32 SDL2main SDL2-static libglew_static nanovg)
 
 FetchContent_Declare(
         Catch2
@@ -38,5 +51,6 @@ add_executable(count_ones tests/count_ones.cpp individual.h population.h rng.h r
 target_link_libraries(count_ones ${SDL_LIBRARIES})
 target_compile_options(count_ones PRIVATE -march=native -O3 )
 target_link_options(count_ones PRIVATE -Dmain=SDL_main)
+target_include_directories(count_ones PRIVATE ${glew_SOURCE_DIR}/include)
 
 catch_discover_tests(test_rng)

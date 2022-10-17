@@ -27,6 +27,7 @@ int main( int argc, char *argv[] ) {
     SDL_Init(SDL_INIT_VIDEO);
     GraphModal graph( 800, 800, "Fitness" );
     auto polling = SDLPolling::get_instance();
+
     population<50, Tournament, 2> environment(
             std::make_shared<CountOnesEval<50>>(),
             std::make_shared<OnePointCrossover<50>>() );
