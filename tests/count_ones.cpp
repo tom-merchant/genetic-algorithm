@@ -25,24 +25,30 @@ class CountOnesEval : public evaluator<genome_size> {
 
 int main( int argc, char *argv[] ) {
     SDL_Init(SDL_INIT_VIDEO);
-    GraphModal graph( 800, 800, "Fitness" );
+    GraphModal graph( 800, 600, "Fitness" );
+    graph.series_colour( "mean", {255, 255, 0} );
+    graph.series_colour( "best", {255, 0, 255} );
     auto polling = SDLPolling::get_instance();
 
-    population<50, Tournament, 2> environment(
-            std::make_shared<CountOnesEval<50>>(),
-            std::make_shared<OnePointCrossover<50>>() );
+    population<2048, Tournament, 2> environment(
+            std::make_shared<CountOnesEval<2048>>(),
+            std::make_shared<OnePointCrossover<2048>>() );
 
     DefaultRand rng;
 
-    environment.spawn( 50, rng );
+    environment.spawn( 500, rng );
 
-    for ( int i = 0 ; i < 50 ; ++i ){
+    for ( int i = 0 ; i < 500 ; ++i ){
         std::cout
             << "epoch " << i
             << ". mean fitness " << environment.pop_mean_fitness()
             << ". total fitness " << environment.pop_fitness()
             << ". best fitness " << environment.best_candidate().fitness << std::endl;
-        environment = environment.breed ( 50, 0.01, rng );
+
+        graph.add_point( i, environment.pop_mean_fitness(), "mean" );
+        graph.add_point( i, environment.best_candidate().fitness, "best" );
+
+        environment = environment.breed ( 250, 0.001, rng );
         polling->poll();
     }
 

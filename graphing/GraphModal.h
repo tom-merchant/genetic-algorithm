@@ -12,6 +12,8 @@
 
 #pragma once
 
+typedef std::array<uint8_t, 3> colour;
+
 class GraphModal {
 public:
     GraphModal( int width, int height, std::string title );
@@ -21,7 +23,8 @@ public:
     void set_y_label( std::string y_label );
     void show_legend( bool );
     void add_point( double x, double y, std::string series );
-    void series_colour( std::string series,  std::array<uint8_t, 3> colour );
+    void series_colour( std::string series,  colour );
+    void set_origin( std::array<double, 2> );
 
     bool open;
 private:
@@ -36,10 +39,26 @@ private:
     std::string x_label;
     std::string y_label;
     bool legend_visible = true;
+    int font_size_pt = 14;
+    int closest_x_gradations_px = 20;
+    int closest_y_gradations_px = 20;
+    int axes_inset_px = 30;
+    int axes_line_weight_px = 2;
+    float device_px_ratio;
 
-    std::map<std::string, std::array<uint8_t, 3>> colours;
+    std::array<double, 2> origin = {0,0};
+
+    colour axes_colour = {255, 255, 255};
+
+    std::map<std::string, colour> colours;
     std::map<std::string, std::vector<std::pair<double, double>>> points;
 
     void on_close();
     void draw();
+
+    void drawAxes();
+
+    void drawLegend();
+
+    void drawSeries();
 };
