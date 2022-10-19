@@ -4,9 +4,6 @@
 
 #pragma once
 
-
-#include "individual.h"
-
 template<size_t genome_size, GeneType genome_type>
 individual<genome_size, genome_type>::individual( Rng& rand_source ) : fitness( 0 ) {
     for ( int i = 0; i < chromosomes; ++i ) {
@@ -26,12 +23,12 @@ template<size_t genome_size, GeneType genome_type>
 Gene individual<genome_size, genome_type>::get_gene( size_t n ) {
     if( genome_type == FLOAT )
     {
-        return get_chromosome( n ).decimal;
+        return Gene{ .decimal = get_chromosome( n ).decimal };
     }
     auto chromosome = n / 64;
     auto bit = n % 64;
 
-    return ( 0b1 & ( genes[ chromosome ] >> 63 - bit ) ) == 1;
+    return Gene{ ( 0b1 & ( genes[ chromosome ].binary >> 63 - bit ) ) == 1 };
 }
 
 template<size_t genome_size, GeneType genome_type>
@@ -52,6 +49,18 @@ void individual<genome_size, genome_type>::mutate( double probability, Rng& rand
             genes[ chromosomes - 1 ].binary &= final_chromosome_mask;
             break;
         case FLOAT:
+            uint64_t mutation_decisions;
+            for( int i = 0; i < chromosomes; i++ )
+            {
+                if( i % 64 == 0 ) {
+                    mutation_decisions = rng_sparse( rand_source, probability );
+                }
+
+                if( ( mutation_decisions >> i ) & 0b1 ) {
+                    auto mut_amt = 2 * mut_step * ( rnd_double( rand_source ) - 0.5 );
+                    genes[ i ].decimal += mut_amt;
+                }
+            }
             break;
     }
 }

@@ -24,8 +24,15 @@ template<size_t genome_size, GeneType genome_type, SelectionMethod method, size_
 void population<genome_size, genome_type, method, num_parents>::sort_candidates() {
     std::sort (
         candidates.begin(), candidates.end(),
-        []( auto a, auto b ){
-            return a.fitness > b.fitness;
+        [ this ]( auto a, auto b ){
+            if( fitness_evaluator->maximise )
+            {
+                return a.fitness > b.fitness;
+            }
+            else
+            {
+                return a.fitness < b.fitness;
+            }
         }
     );
 }

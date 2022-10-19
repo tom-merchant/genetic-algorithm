@@ -23,7 +23,7 @@ public:
 template<size_t genome_size>
 individual<genome_size, FLOAT>
 OnePointCrossover<genome_size>::combine(std::array<individual<genome_size, FLOAT>, 2> parents, Rng &rand_source) {
-    individual<genome_size, BINARY> child;
+    individual<genome_size, FLOAT> child;
     auto crossover_point = static_cast<size_t>( rnd_double (rand_source) * genome_size );
 
     for ( int i = 0 ; i < parents[0].chromosome_count() ; ++i ) {

@@ -10,4 +10,5 @@ template<size_t genome_size, GeneType genome_type>
 class evaluator {
 public:
     virtual double test( individual<genome_size, genome_type> individual ) = 0;
+    bool maximise = true;
 };
