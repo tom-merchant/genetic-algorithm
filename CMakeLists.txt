@@ -47,10 +47,16 @@ include(Catch)
 add_executable(test_rng tests/test_rng.cpp rng.h rng.cpp )
 target_link_libraries(test_rng PRIVATE Catch2::Catch2WithMain)
 
-add_executable(count_ones tests/count_ones.cpp individual.h population.h rng.h rng.cpp evaluator.h combinator.h graphing/GraphModal.cpp graphing/GraphModal.h graphing/SDLPolling.cpp )
+add_executable(count_ones tests/count_ones.cpp individual.h population.h rng.h rng.cpp evaluator.h combinator.h graphing/GraphModal.cpp graphing/GraphModal.h graphing/SDLPolling.cpp)
 target_link_libraries(count_ones ${SDL_LIBRARIES})
 target_compile_options(count_ones PRIVATE -march=native -O3 )
 target_link_options(count_ones PRIVATE -Dmain=SDL_main)
 target_include_directories(count_ones PRIVATE ${glew_SOURCE_DIR}/include)
+
+add_executable(float_test individual.h population.h rng.h rng.cpp evaluator.h combinator.h graphing/GraphModal.cpp graphing/GraphModal.h graphing/SDLPolling.cpp tests/float_test.cpp)
+target_link_libraries(float_test ${SDL_LIBRARIES})
+target_compile_options(float_test PRIVATE -march=native -O3 )
+target_link_options(float_test PRIVATE -Dmain=SDL_main)
+target_include_directories(float_test PRIVATE ${glew_SOURCE_DIR}/include)
 
 catch_discover_tests(test_rng)

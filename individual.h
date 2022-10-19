@@ -9,16 +9,32 @@
 #include <array>
 #include "rng.h"
 
-template<size_t genome_size>
+enum GeneType{
+    BINARY,
+    FLOAT
+};
+
+union Chromosome {
+    uint64_t binary;
+    double decimal;
+};
+
+union Gene{
+    bool binary;
+    double decimal;
+};
+
+template<size_t genome_size, GeneType type>
 class individual {
 public:
     double fitness;
-    bool get_gene( size_t n );
-    uint64_t get_chromosome( size_t n );
-    void set_chromosome( size_t n, uint64_t chromosome );
+    Gene get_gene( size_t n );
+    Chromosome get_chromosome( size_t n );
+    void set_chromosome( size_t n, Chromosome chromosome );
     individual( Rng& rand_source );
     individual();
     void mutate( double probability, Rng& rand_source );
+    void set_mutation_step( double mut_step );
 
     size_t gene_count() { return genome_size; }
     size_t chromosome_count() { return chromosomes; }
@@ -26,8 +42,9 @@ public:
 private:
     static constexpr size_t chromosomes = (genome_size + 63)/64;
     static constexpr uint64_t final_chromosome_mask = genome_size % 64 == 0 ? ~0 : ~0 << 64 - ( genome_size % 64 );
+    double mut_step = 1;
 
-    std::array<uint64_t, chromosomes> genes;
+    std::array<Chromosome, chromosomes> genes;
 };
 
 #include "individual.cpp"

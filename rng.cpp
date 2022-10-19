@@ -24,7 +24,6 @@ double rnd_double( Rng& rng ) {
 }
 
 // thanks stackoverflow https://stackoverflow.com/a/64168015
-// if higher precision is needed then 32 bit should be pretty good
 uint64_t rng_sparse( Rng& rng, double bit_density ) {
     auto dividend = static_cast<uint16_t>(bit_density * UINT16_MAX);
 

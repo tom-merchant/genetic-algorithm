@@ -6,8 +6,8 @@
 
 #include "individual.h"
 
-template<size_t genome_size>
+template<size_t genome_size, GeneType genome_type>
 class evaluator {
 public:
-    virtual double test( individual<genome_size> individual ) = 0;
+    virtual double test( individual<genome_size, genome_type> individual ) = 0;
 };

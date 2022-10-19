@@ -11,12 +11,12 @@
 #include "../graphing/SDLPolling.h"
 
 template<size_t genome_size>
-class CountOnesEval : public evaluator<genome_size> {
-    double test( individual<genome_size> individual ) override {
+class CountOnesEval : public evaluator<genome_size, BINARY> {
+    double test( individual<genome_size, BINARY> individual ) override {
         auto ones = 0;
 
         for ( int i = 0; i < individual.chromosome_count(); ++i ) {
-            ones += std::popcount( individual.get_chromosome( i ) );
+            ones += std::popcount( individual.get_chromosome( i ).binary );
         }
 
         return (double)ones;
@@ -31,15 +31,15 @@ int main( int argc, char *argv[] ) {
     graph.series_colour( "best", {255, 0, 255} );
     auto polling = SDLPolling::get_instance();
 
-    population<50, Tournament, 2> environment(
+    population<50, BINARY, Tournament, 2> environment(
             std::make_shared<CountOnesEval<50>>(),
-            std::make_shared<OnePointCrossover<50>>() );
+            std::make_shared<BinOnePointCrossover<50>>() );
 
     DefaultRand rng;
 
     environment.spawn( 50, rng );
 
-    for ( int i = 0 ; i < 50000 && graph.open; ++i ){
+    for ( int i = 0 ; i < 50 && graph.open; ++i ){
         std::cout
             << "epoch " << i
             << ". mean fitness " << environment.pop_mean_fitness()

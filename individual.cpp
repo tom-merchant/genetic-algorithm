@@ -5,50 +5,73 @@
 #pragma once
 
 
-template<size_t genome_size>
-individual<genome_size>::individual( Rng& rand_source ) {
+#include "individual.h"
+
+template<size_t genome_size, GeneType genome_type>
+individual<genome_size, genome_type>::individual( Rng& rand_source ) : fitness( 0 ) {
     for ( int i = 0; i < chromosomes; ++i ) {
-        genes[i] = rand_source.rand();
+        genes[i] = genome_type == BINARY
+                ? Chromosome{ rand_source.rand() }
+                : Chromosome{ .decimal = rnd_double( rand_source ) };
     }
 
-    // mask off the last few bits that aren't valid genes
-    genes[ chromosomes - 1 ] &= final_chromosome_mask;
+    if( genome_type == BINARY )
+    {
+        // mask off the last few bits that aren't valid genes
+        genes[ chromosomes - 1 ].binary &= final_chromosome_mask;
+    }
 }
 
-template<size_t genome_size>
-bool individual<genome_size>::get_gene( size_t n ) {
+template<size_t genome_size, GeneType genome_type>
+Gene individual<genome_size, genome_type>::get_gene( size_t n ) {
+    if( genome_type == FLOAT )
+    {
+        return get_chromosome( n ).decimal;
+    }
     auto chromosome = n / 64;
     auto bit = n % 64;
 
     return ( 0b1 & ( genes[ chromosome ] >> 63 - bit ) ) == 1;
 }
 
-template<size_t genome_size>
-uint64_t individual<genome_size>::get_chromosome( size_t n ) {
+template<size_t genome_size, GeneType genome_type>
+Chromosome individual<genome_size, genome_type>::get_chromosome( size_t n ) {
     return genes[ n ];
 }
 
-template<size_t genome_size>
-void individual<genome_size>::mutate( double probability, Rng& rand_source ) {
-    for ( int i = 0 ; i < chromosomes ; ++i ) {
-        auto bits_to_mutate = rng_sparse ( rand_source, probability );
-        genes[ i ] ^= bits_to_mutate;
-    }
+template<size_t genome_size, GeneType genome_type>
+void individual<genome_size, genome_type>::mutate( double probability, Rng& rand_source ) {
 
-    genes[ chromosomes - 1 ] &= final_chromosome_mask;
+    switch (genome_type) {
+        case BINARY:
+            for ( int i = 0 ; i < chromosomes ; ++i ) {
+                auto bits_to_mutate = rng_sparse ( rand_source, probability );
+                genes[ i ].binary ^= bits_to_mutate;
+            }
+
+            genes[ chromosomes - 1 ].binary &= final_chromosome_mask;
+            break;
+        case FLOAT:
+            break;
+    }
 }
 
-template < size_t genome_size >
-void individual<genome_size>::set_chromosome ( size_t n, uint64_t chromosome ){
+template<size_t genome_size, GeneType genome_type>
+void individual<genome_size, genome_type>::set_chromosome ( size_t n, Chromosome chromosome ){
     genes[ n ] = chromosome;
 
-    if( n == chromosomes - 1 )
+    if( genome_type == BINARY && n == chromosomes - 1 )
     {
-        genes[ n ] &= final_chromosome_mask;
+        genes[ n ].binary &= final_chromosome_mask;
     }
 }
 
 
-template < size_t genome_size >
-individual<genome_size>::individual ( ){
+template<size_t genome_size, GeneType genome_type>
+individual<genome_size, genome_type>::individual ( ) : fitness( 0 ){
+}
+
+template<size_t genome_size, GeneType type>
+void individual<genome_size, type>::set_mutation_step( double mut_step ) {
+    this->mut_step = mut_step;
 }
