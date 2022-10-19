@@ -9,6 +9,8 @@
 #include <SDL_opengl.h>
 #include "nanovg_gl.h"
 #include "nanovg_gl_utils.h"
+#include <sstream>
+#include <iomanip>
 
 GraphModal::GraphModal ( int width, int height, std::string title )
     : open( true ), width( width ), height( height ) {
@@ -79,6 +81,10 @@ void GraphModal::add_point(double x, double y, std::string series) {
     }
 
     points[ series ].push_back( { x, y } );
+
+    maxX = std::max( maxX, x );
+    maxY = std::max( maxY, y );
+
     draw();
 }
 
@@ -104,6 +110,7 @@ void GraphModal::draw() {
 
     nvgBeginFrame( nvgCtx, width, height, device_px_ratio );
         drawAxes();
+        drawAxisTicks();
         drawLegend();
         drawSeries();
     nvgEndFrame( nvgCtx );
@@ -122,10 +129,53 @@ void GraphModal::drawAxes() {
     nvgClosePath( nvgCtx );
 }
 
+void GraphModal::drawAxisTicks() {
+    size_t x_axis_ticks = (width - axes_inset_px) / x_gradations_px;
+    size_t y_axis_ticks = (height - axes_inset_px) / y_gradations_px;
+    double x_step = (maxX - origin[0]) / x_axis_ticks;
+    double y_step = (maxY - origin[1]) / y_axis_ticks;
+
+    nvgFillColor( nvgCtx, TO_NVG( ((uint8_t[3]){255, 255, 255}) ) );
+    setFont();
+    std::stringstream origin_indicator;
+    origin_indicator << "(" << origin[0] << ", " << origin[1] << ")";
+    auto origin_string = origin_indicator.str();
+
+    float bounds[ 4 ];
+    nvgTextBounds( nvgCtx, 0, 0, origin_string.c_str(), origin_string.c_str() + origin_string.length(), bounds );
+    nvgText( nvgCtx, 2, height - (bounds[3] + 2), origin_string.c_str(), origin_string.c_str() + origin_string.length() );
+
+    auto x = x_gradations_px + axes_inset_px;
+    auto y = height - bounds[3];
+    std::stringstream number_builder;
+    number_builder << std::setprecision(3);
+
+    nvgTextAlign( nvgCtx, NVG_ALIGN_CENTER | NVG_ALIGN_TOP );
+    for (int i = 1; i < x_axis_ticks + 1; ++i) {
+        number_builder << origin[0] + i * x_step;
+        auto numstr = number_builder.str();
+        nvgText( nvgCtx, x, y, numstr.c_str(), numstr.c_str() + numstr.length() );
+        x += x_gradations_px;
+        number_builder.str(std::string());
+        number_builder.clear();
+    }
+
+    y = height - (y_gradations_px + axes_inset_px);
+    x = 0;
+
+    nvgTextAlign( nvgCtx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE );
+    for (int j = 1; j < y_axis_ticks + 1; ++j) {
+        number_builder << origin[1] + j * y_step;
+        auto numstr = number_builder.str();
+        nvgText( nvgCtx, x, y, numstr.c_str(), numstr.c_str() + numstr.length() );
+        y -= y_gradations_px;
+        number_builder.str(std::string());
+        number_builder.clear();
+    }
+}
+
 void GraphModal::drawLegend() {
-    nvgFontSize( nvgCtx, font_size_pt );
-    nvgFontFace( nvgCtx, "sans" );
-    nvgTextAlign( nvgCtx, NVG_ALIGN_LEFT | NVG_ALIGN_TOP );
+    setFont();
 
     auto legTextY = axes_inset_px;
     auto legTextX = axes_inset_px;
@@ -150,15 +200,6 @@ void GraphModal::drawLegend() {
 }
 
 void GraphModal::drawSeries() {
-    double maxX = -INFINITY;
-    double maxY = -INFINITY;
-
-    for ( auto series : points ) {
-        for ( auto point : series.second ) {
-            maxX = std::max( maxX, point.first );
-            maxY = std::max( maxY, point.second );
-        }
-    }
 
     double xStep = ( width - axes_inset_px ) / ( maxX - origin[0] );
     double yStep = ( height - axes_inset_px ) / ( maxY - origin[1] );
@@ -188,4 +229,9 @@ void GraphModal::set_origin( std::array<double, 2> pt ) {
     origin = pt;
 }
 
+void GraphModal::setFont() {
+    nvgFontSize( nvgCtx, font_size_pt );
+    nvgFontFace( nvgCtx, "sans" );
+    nvgTextAlign( nvgCtx, NVG_ALIGN_LEFT | NVG_ALIGN_TOP );
+}
 

@@ -132,6 +132,9 @@ population<genome_size, method, num_parents> population<genome_size, method, num
         new_pop.add_unordered ( child );
     }
 
+    new_pop.candidates.erase( new_pop.candidates.end() - 1 );
+    new_pop.candidates.insert( new_pop.candidates.begin(), best_candidate() );
+
     new_pop.sort_candidates();
     new_pop.update_probabilities();
 

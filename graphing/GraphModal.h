@@ -8,6 +8,7 @@
 #include <shared_mutex>
 #include <map>
 #include <vector>
+#include <cmath>
 #include "nanovg.h"
 
 #pragma once
@@ -40,11 +41,14 @@ private:
     std::string y_label;
     bool legend_visible = true;
     int font_size_pt = 14;
-    int closest_x_gradations_px = 20;
-    int closest_y_gradations_px = 20;
+    int x_gradations_px = 70;
+    int y_gradations_px = 40;
     int axes_inset_px = 30;
     int axes_line_weight_px = 2;
     float device_px_ratio;
+
+    double maxX = -INFINITY;
+    double maxY = -INFINITY;
 
     std::array<double, 2> origin = {0,0};
 
@@ -61,4 +65,8 @@ private:
     void drawLegend();
 
     void drawSeries();
+
+    void drawAxisTicks();
+
+    void setFont();
 };
