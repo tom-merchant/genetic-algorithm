@@ -29,7 +29,11 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(glew)
 
-set(SDL_LIBRARIES ${SDL_LIBRARIES} mingw32 SDL2main SDL2-static libglew_static nanovg)
+IF(WIN32)
+    set(SDL_LIBRARIES ${SDL_LIBRARIES} mingw32 SDL2main SDL2-static libglew_static nanovg)
+ELSE()
+    set(SDL_LIBRARIES ${SDL_LIBRARIES} SDL2main SDL2-static libglew_static nanovg)
+ENDIF()
 
 FetchContent_Declare(
         Catch2

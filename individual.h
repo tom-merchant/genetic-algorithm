@@ -40,7 +40,7 @@ public:
     size_t chromosome_count() { return chromosomes; }
 
 private:
-    static constexpr size_t chromosomes = (genome_size + 63)/64;
+    static constexpr size_t chromosomes = BINARY ? (genome_size + 63)/64 : genome_size;
     static constexpr uint64_t final_chromosome_mask = genome_size % 64 == 0 ? ~0 : (~((uint64_t)0)) << 64 - ( genome_size % 64 );
     double mut_step = 1;
 

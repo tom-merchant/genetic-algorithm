@@ -5,6 +5,7 @@
 #pragma once
 
 #include <thread>
+#include <functional>
 #include <mutex>
 #include <SDL.h>
 #include <map>
