@@ -33,8 +33,7 @@ public:
     void set_chromosome( size_t n, Chromosome chromosome );
     individual( Rng& rand_source );
     individual();
-    void mutate( double probability, Rng& rand_source );
-    void set_mutation_step( double mut_step );
+    void mutate( double probability, Rng& rand_source, double mut_step );
 
     size_t gene_count() { return genome_size; }
     size_t chromosome_count() { return chromosomes; }
@@ -42,7 +41,6 @@ public:
 private:
     static constexpr size_t chromosomes = BINARY ? (genome_size + 63)/64 : genome_size;
     static constexpr uint64_t final_chromosome_mask = genome_size % 64 == 0 ? ~0 : (~((uint64_t)0)) << 64 - ( genome_size % 64 );
-    double mut_step = 1;
 
     std::array<Chromosome, chromosomes> genes;
 };

@@ -62,12 +62,22 @@ void population<genome_size, genome_type, method, num_parents>::update_probabili
 
     mean_fitness = population_fitness / candidates.size();
 
-    if( method == Probabilistic )
+    if( method == RouletteWheel )
     {
         cumulative_probability[0] = candidates[0].fitness / population_fitness;
 
+        if( fitness_evaluator->maximise == false )
+        {
+            cumulative_probability[0] = 1 - cumulative_probability[0];
+        }
+
         for ( int i = 1; i < candidates.size(); ++i ) {
-            cumulative_probability[i] = cumulative_probability[i - 1] + candidates[i].fitness / population_fitness;
+            if( fitness_evaluator-> maximise )
+            {
+                cumulative_probability[i] = cumulative_probability[i - 1] + candidates[i].fitness / population_fitness;
+            } else {
+                cumulative_probability[i] = cumulative_probability[i - 1] + 1 - (candidates[i].fitness / population_fitness);
+            }
         }
     }
 }
@@ -80,7 +90,7 @@ individual<genome_size, genome_type> population<genome_size, genome_type, method
         auto contestants = {rnd_double( rand_source ), rnd_double( rand_source )};
         return candidates[ min(contestants) ];
     }
-    else if( method == Probabilistic )
+    else if( method == RouletteWheel )
     {
         auto rand = rnd_double( rand_source );
         size_t interval[2] = {0, candidates.size()};
@@ -135,7 +145,7 @@ population<genome_size, genome_type, method, num_parents> population<genome_size
         }
 
         individual<genome_size, genome_type> child = recombinator->combine( parents, rand_source );
-        child.mutate ( mutation_rate, rand_source );
+        child.mutate ( mutation_rate, rand_source, mutation_step );
         new_pop.add_unordered ( child );
     }
 
@@ -153,4 +163,9 @@ void population<genome_size, genome_type, method, num_parents>::add_unordered ( 
     candidate.fitness = fitness_evaluator->test( candidate );
     candidates.push_back( candidate );
     cumulative_probability.push_back( 0 );
+}
+
+template < size_t genome_size, GeneType genome_type, SelectionMethod method, size_t num_parents >
+void population<genome_size, genome_type, method, num_parents>::set_mut_step ( double mutation_step ){
+    this->mutation_step = mutation_step;
 }

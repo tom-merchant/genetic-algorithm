@@ -37,7 +37,7 @@ Chromosome individual<genome_size, genome_type>::get_chromosome( size_t n ) {
 }
 
 template<size_t genome_size, GeneType genome_type>
-void individual<genome_size, genome_type>::mutate( double probability, Rng& rand_source ) {
+void individual<genome_size, genome_type>::mutate( double probability, Rng& rand_source, double mut_step ) {
 
     switch (genome_type) {
         case BINARY:
@@ -78,9 +78,4 @@ void individual<genome_size, genome_type>::set_chromosome ( size_t n, Chromosome
 
 template<size_t genome_size, GeneType genome_type>
 individual<genome_size, genome_type>::individual ( ) : fitness( 0 ){
-}
-
-template<size_t genome_size, GeneType type>
-void individual<genome_size, type>::set_mutation_step( double mut_step ) {
-    this->mut_step = mut_step;
 }

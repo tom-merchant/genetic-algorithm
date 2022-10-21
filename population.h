@@ -13,7 +13,7 @@
 
 enum SelectionMethod {
     Tournament,
-    Probabilistic
+    RouletteWheel
 };
 
 template<size_t genome_size, GeneType genome_type, SelectionMethod method, size_t num_parents>
@@ -29,6 +29,7 @@ public:
     double pop_fitness();
     double pop_mean_fitness();
     void add( individual<genome_size, genome_type> );
+    void set_mut_step( double mutation_step );
     population<genome_size, genome_type, method, num_parents> breed( size_t generation_size, double mutation_rate, Rng& rand_source );
 private:
     std::shared_ptr<evaluator<genome_size, genome_type>> fitness_evaluator;
@@ -41,6 +42,7 @@ private:
     double population_fitness;
     double mean_fitness;
     double best_fitness;
+    double mutation_step = 1;
 
     void add_unordered( individual<genome_size, genome_type> );
     void sort_candidates();

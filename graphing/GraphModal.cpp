@@ -84,6 +84,7 @@ void GraphModal::add_point(double x, double y, std::string series) {
 
     maxX = std::max( maxX, x );
     maxY = std::max( maxY, y );
+    minY = std::min( minY, y );
 
     draw();
 }
@@ -96,6 +97,7 @@ void GraphModal::series_colour( std::string series, colour colour ) {
 #define TO_NVG(x) ((NVGcolor){x[0] / 255.0f, x[1] / 255.0f, x[2] / 255.0f, 1.0f})
 
 void GraphModal::draw() {
+    update();
     SDL_GL_MakeCurrent( window, glCtx );
 
     glClearColor(0,0,0,0);
@@ -233,5 +235,15 @@ void GraphModal::setFont() {
     nvgFontSize( nvgCtx, font_size_pt );
     nvgFontFace( nvgCtx, "sans" );
     nvgTextAlign( nvgCtx, NVG_ALIGN_LEFT | NVG_ALIGN_TOP );
+}
+
+void GraphModal::set_autoscale_y ( bool b ) {
+    autoscale_y = b;
+}
+
+void GraphModal::update ( ){
+    if( autoscale_y ) {
+        origin[1] = minY;
+    }
 }
 

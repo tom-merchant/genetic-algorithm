@@ -28,6 +28,9 @@ public:
     void set_origin( std::array<double, 2> );
 
     bool open;
+
+    void set_autoscale_y ( bool b );
+
 private:
     SDL_Renderer* renderer;
     SDL_Window* window;
@@ -46,9 +49,11 @@ private:
     int axes_inset_px = 30;
     int axes_line_weight_px = 2;
     float device_px_ratio;
+    bool autoscale_y = false;
 
     double maxX = -INFINITY;
     double maxY = -INFINITY;
+    double minY = INFINITY;
 
     std::array<double, 2> origin = {0,0};
 
@@ -69,4 +74,6 @@ private:
     void drawAxisTicks();
 
     void setFont();
+
+    void update ( );
 };
