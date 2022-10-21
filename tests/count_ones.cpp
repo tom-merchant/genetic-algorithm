@@ -49,7 +49,7 @@ int main( int argc, char *argv[] ) {
         graph.add_point( i+1, environment.pop_mean_fitness(), "mean" );
         graph.add_point( i+1, environment.best_candidate().fitness, "best" );
 
-        environment = environment.breed ( 50, 0.1, rng );
+        environment = environment.breed ( 50, 0.01, rng );
         polling->poll();
     }
 

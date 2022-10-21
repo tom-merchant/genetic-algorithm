@@ -88,7 +88,7 @@ individual<genome_size, genome_type> population<genome_size, genome_type, method
     if( method == Tournament )
     {
         auto contestants = {rnd_double( rand_source ), rnd_double( rand_source )};
-        return candidates[ min(contestants) ];
+        return candidates[ int( min(contestants) * (double)candidates.size() ) ];
     }
     else if( method == RouletteWheel )
     {
