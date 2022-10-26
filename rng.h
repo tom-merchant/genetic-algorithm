@@ -24,3 +24,4 @@ private:
 
 double rnd_double( Rng& rng );
 uint64_t rng_sparse( Rng& rng, double bit_density );
+double uniform_double( Rng& rng, double min, double max );

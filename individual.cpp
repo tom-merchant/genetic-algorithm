@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <cassert>
+
 template<size_t genome_size, GeneType genome_type>
 individual<genome_size, genome_type>::individual( Rng& rand_source ) : fitness( 0 ) {
     for ( int i = 0; i < chromosomes; ++i ) {
@@ -16,6 +18,15 @@ individual<genome_size, genome_type>::individual( Rng& rand_source ) : fitness( 
     {
         // mask off the last few bits that aren't valid genes
         genes[ chromosomes - 1 ].binary &= final_chromosome_mask;
+    }
+}
+
+template<size_t genome_size, GeneType type>
+individual<genome_size, type>::individual( Rng& rand_source, float_gene_map<genome_size> map ) {
+    assert( type == FLOAT );
+
+    for ( int i = 0; i < chromosomes; ++i ) {
+        genes[i] = Chromosome{ .decimal = uniform_double( rand_source, map.min[i], map.max[i] ) };
     }
 }
 
@@ -78,4 +89,13 @@ void individual<genome_size, genome_type>::set_chromosome ( size_t n, Chromosome
 
 template<size_t genome_size, GeneType genome_type>
 individual<genome_size, genome_type>::individual ( ) : fitness( 0 ){
+}
+
+template<size_t genome_size, GeneType type>
+void individual<genome_size, type>::clamp_genes(float_gene_map<genome_size> map) {
+    assert( type == FLOAT );
+
+    for (int i = 0; i < genome_size; ++i) {
+        genes[i].decimal = std::clamp( genes[i].decimal, map.min[i], map.max[i] );
+    }
 }

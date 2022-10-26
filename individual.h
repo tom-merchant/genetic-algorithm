@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <array>
 #include "rng.h"
+#include "float_gene_map.h"
 
 enum GeneType{
     BINARY,
@@ -32,8 +33,10 @@ public:
     Chromosome get_chromosome( size_t n );
     void set_chromosome( size_t n, Chromosome chromosome );
     individual( Rng& rand_source );
+    individual( Rng& rand_source, float_gene_map<genome_size> map );
     individual();
     void mutate( double probability, Rng& rand_source, double mut_step );
+    void clamp_genes( float_gene_map<genome_size> map );
 
     size_t gene_count() { return genome_size; }
     size_t chromosome_count() { return chromosomes; }

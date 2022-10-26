@@ -6,11 +6,16 @@
 #include <limits>
 #include <random>
 
+
 template<size_t genome_size, GeneType genome_type, SelectionMethod method, size_t num_parents>
 void population<genome_size, genome_type, method, num_parents>::spawn( size_t N, Rng& rand_source ) {
 
     for (int i = 0; i < N; ++i) {
         individual<genome_size, genome_type> candidate( rand_source );
+        if( has_gene_map )
+        {
+            candidate = individual<genome_size, genome_type>( rand_source, gene_map );
+        }
         candidate.fitness = fitness_evaluator->test( candidate );
         candidates.push_back( candidate );
         cumulative_probability.push_back( 0 );
@@ -144,15 +149,24 @@ population<genome_size, genome_type, method, num_parents> population<genome_size
             parents[j] = sample ( rand_source );
         }
 
+        std::random_shuffle( parents.begin(), parents.end() );
         individual<genome_size, genome_type> child = recombinator->combine( parents, rand_source );
         child.mutate ( mutation_rate, rand_source, mutation_step );
+        if( has_gene_map ){ child.clamp_genes( gene_map ); }
         new_pop.add_unordered ( child );
     }
 
-    new_pop.candidates.erase( new_pop.candidates.end() - 1 );
-    new_pop.candidates.insert( new_pop.candidates.begin(), best_candidate() );
-
     new_pop.sort_candidates();
+    new_pop.candidates.erase( new_pop.candidates.end() - 1 );
+
+    auto elite_pos = std::lower_bound(
+            new_pop.candidates.begin(), new_pop.candidates.end(), best_candidate(),
+            [this]( auto c1, auto c2 ){
+                return fitness_evaluator->maximise ? c1.fitness > c2.fitness : c1.fitness < c2.fitness;
+            } );
+
+    new_pop.candidates.insert( elite_pos, best_candidate() );
+
     new_pop.update_probabilities();
 
     return new_pop;
@@ -168,4 +182,10 @@ void population<genome_size, genome_type, method, num_parents>::add_unordered ( 
 template < size_t genome_size, GeneType genome_type, SelectionMethod method, size_t num_parents >
 void population<genome_size, genome_type, method, num_parents>::set_mut_step ( double mutation_step ){
     this->mutation_step = mutation_step;
+}
+
+template<size_t genome_size, GeneType genome_type, SelectionMethod method, size_t num_parents>
+void population<genome_size, genome_type, method, num_parents>::set_gene_map( float_gene_map<genome_size> map ) {
+    gene_map = map;
+    has_gene_map = true;
 }

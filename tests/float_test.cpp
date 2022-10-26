@@ -11,6 +11,8 @@
 #include "../graphing/GraphModal.h"
 #include "../graphing/SDLPolling.h"
 #include "../population.h"
+#include "../float_gene_map.h"
+
 
 template<size_t genome_size>
 class FloatTestEval : public evaluator<genome_size, FLOAT> {
@@ -37,18 +39,28 @@ int main( int argc, char *argv[] ) {
     graph.set_origin({1, 0});
     graph.series_colour( "mean", {255, 255, 0} );
     graph.series_colour( "best", {255, 0, 255} );
+    graph.set_autoscale_y(true);
     auto polling = SDLPolling::get_instance();
+
 
     population<20, FLOAT, RouletteWheel, 2> environment(
     std::make_shared<FloatTestEval<20>>(),
             std::make_shared<OnePointCrossover<20>>() );
 
+    float_gene_map<20> gene_map{};
+
+    for (int x = 0; x < 20; ++x) {
+        gene_map.min[x] = -5.12;
+        gene_map.max[x] = 5.12;
+    }
+
     DefaultRand rng;
 
-    environment.set_mut_step (10);
+    environment.set_gene_map( gene_map );
+    environment.set_mut_step (1.5);
     environment.spawn( 50, rng );
 
-    for ( int i = 0 ; i < 50 && graph.open; ++i ){
+    for ( int i = 0 ; i < 100 && graph.open; ++i ){
         std::cout
                 << "epoch " << i
                 << ". mean fitness " << environment.pop_mean_fitness()
@@ -58,7 +70,7 @@ int main( int argc, char *argv[] ) {
         graph.add_point( i+1, environment.pop_mean_fitness(), "mean" );
         graph.add_point( i+1, environment.best_candidate().fitness, "best" );
 
-        environment = environment.breed ( 50, 0.05, rng );
+        environment = environment.breed ( 50, 0.04, rng );
         polling->poll();
     }
 

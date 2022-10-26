@@ -8,7 +8,7 @@ include_directories(nanovg/src)
 
 add_compile_definitions( NANOVG_GL3_IMPLEMENTATION )
 
-add_executable(week1cpp main.cpp individual.h population.h rng.h rng.cpp evaluator.h combinator.h)
+add_executable(week1cpp main.cpp individual.h population.h rng.h rng.cpp evaluator.h combinator.h float_gene_map.h)
 
 Include(FetchContent)
 
@@ -57,7 +57,7 @@ target_compile_options(count_ones PRIVATE -march=native -O3 )
 target_link_options(count_ones PRIVATE -Dmain=SDL_main)
 target_include_directories(count_ones PRIVATE ${glew_SOURCE_DIR}/include)
 
-add_executable(float_test individual.h population.h rng.h rng.cpp evaluator.h combinator.h graphing/GraphModal.cpp graphing/GraphModal.h graphing/SDLPolling.cpp tests/float_test.cpp)
+add_executable(float_test individual.h population.h rng.h rng.cpp evaluator.h combinator.h graphing/GraphModal.cpp graphing/GraphModal.h graphing/SDLPolling.cpp tests/float_test.cpp float_gene_map.h)
 target_link_libraries(float_test ${SDL_LIBRARIES})
 target_compile_options(float_test PRIVATE -march=native -O3 )
 target_link_options(float_test PRIVATE -Dmain=SDL_main)

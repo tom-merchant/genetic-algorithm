@@ -30,11 +30,14 @@ public:
     double pop_mean_fitness();
     void add( individual<genome_size, genome_type> );
     void set_mut_step( double mutation_step );
+    void set_gene_map( float_gene_map<genome_size> map );
     population<genome_size, genome_type, method, num_parents> breed( size_t generation_size, double mutation_rate, Rng& rand_source );
 private:
     std::shared_ptr<evaluator<genome_size, genome_type>> fitness_evaluator;
     std::shared_ptr<combinator<genome_size, num_parents, genome_type>> recombinator;
     std::vector<individual<genome_size, genome_type>> candidates;
+    float_gene_map<genome_size> gene_map;
+    bool has_gene_map = false;
 
     // stores the cumulative probability of the candidate, or a prior candidate being chosen for quick pairing
     std::vector<double> cumulative_probability;
