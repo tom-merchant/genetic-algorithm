@@ -92,7 +92,7 @@ individual<genome_size, genome_type> population<genome_size, genome_type, method
 
     if( method == Tournament )
     {
-        auto contestants = {rnd_double( rand_source ), rnd_double( rand_source )};
+        auto contestants = {rnd_double( rand_source ), rnd_double( rand_source ), };
         return candidates[ int( min(contestants) * (double)candidates.size() ) ];
     }
     else if( method == RouletteWheel )
@@ -143,6 +143,8 @@ population<genome_size, genome_type, method, num_parents> population<genome_size
 {
     std::array<individual<genome_size, genome_type>, num_parents> parents;
     population<genome_size, genome_type, method, num_parents> new_pop( fitness_evaluator, recombinator );
+    new_pop.set_mut_step( mutation_step );
+    new_pop.set_gene_map( gene_map );
 
     for ( auto i = 0 ; i < generation_size ; ++i ){
         for ( auto j = 0 ; j < num_parents ; ++j ){

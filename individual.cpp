@@ -25,7 +25,7 @@ template<size_t genome_size, GeneType type>
 individual<genome_size, type>::individual( Rng& rand_source, float_gene_map<genome_size> map ) {
     assert( type == FLOAT );
 
-    for ( int i = 0; i < chromosomes; ++i ) {
+    for ( int i = 0; i < genome_size; ++i ) {
         genes[i] = Chromosome{ .decimal = uniform_double( rand_source, map.min[i], map.max[i] ) };
     }
 }
@@ -68,8 +68,7 @@ void individual<genome_size, genome_type>::mutate( double probability, Rng& rand
                 }
 
                 if( ( mutation_decisions >> i ) & 0b1 ) {
-                    auto mut_amt = 2 * mut_step * ( rnd_double( rand_source ) - 0.5 );
-                    genes[ i ].decimal += mut_amt;
+                    genes[ i ].decimal += uniform_double( rand_source, -mut_step, mut_step );
                 }
             }
             break;

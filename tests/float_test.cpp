@@ -57,10 +57,10 @@ int main( int argc, char *argv[] ) {
     DefaultRand rng;
 
     environment.set_gene_map( gene_map );
-    environment.set_mut_step (1.5);
+    environment.set_mut_step (1.4);
     environment.spawn( 50, rng );
 
-    for ( int i = 0 ; i < 100 && graph.open; ++i ){
+    for ( int i = 0 ; i < 50 && graph.open; ++i ){
         std::cout
                 << "epoch " << i
                 << ". mean fitness " << environment.pop_mean_fitness()
@@ -70,7 +70,7 @@ int main( int argc, char *argv[] ) {
         graph.add_point( i+1, environment.pop_mean_fitness(), "mean" );
         graph.add_point( i+1, environment.best_candidate().fitness, "best" );
 
-        environment = environment.breed ( 50, 0.04, rng );
+        environment = environment.breed ( 50, 0.06, rng );
         polling->poll();
     }
 

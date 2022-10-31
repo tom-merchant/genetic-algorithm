@@ -26,7 +26,7 @@ double rnd_double( Rng& rng ) {
 double uniform_double( Rng& rng, double min, double max ) {
     auto rnd = rnd_double( rng );
     rnd *= max - min;
-    return rnd - (max - min) / 2;
+    return rnd + min;
 }
 
 // thanks stackoverflow https://stackoverflow.com/a/64168015

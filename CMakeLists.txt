@@ -27,6 +27,8 @@ FetchContent_Declare(
         GIT_TAG glew-cmake-2.2.0
 )
 
+set(glew-cmake_BUILD_SHARED FALSE)
+
 FetchContent_MakeAvailable(glew)
 
 IF(WIN32)
